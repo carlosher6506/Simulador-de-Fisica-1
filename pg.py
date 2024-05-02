@@ -18,14 +18,9 @@ def draw_trajectory(u, theta, gravity):
         yPositions.append(18 * (u * math.sin(theta) * t - 0.5 * gravity * t * t))
     return xPositions, yPositions
 
-def calculate_angle(pivot, pos):
-    """Calculate the angle between the horizontal and the line joining the pivot and pos."""
-    dx = pos[0] - pivot[0]
-    dy = pivot[1] - pos[1]  # Invert dy due to Pygame's y-coordinate being downwards.
-    if dx == 0:
-        dx = 0.01  # Prevent division by zero
-    angle = math.degrees(math.atan(dy / dx))
-    return angle + 90 if dx > 0 else angle + 270
+def draw_angle(surface, font, angle, position):
+    angle_text = font.render(f"Ángulo: {angle}°", True, pygame.Color('black'))
+    surface.blit(angle_text, position)
 
 class BackgroundSprite(pygame.sprite.Sprite):
     def __init__(self, image_path, screen_size):
@@ -70,15 +65,26 @@ class ProjectileSprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect(center=initial_position)
 
     def update_position(self, new_position):
-        """Update the position of the projectile."""
+        #Update the position of the projectile
         self.rect.center = new_position
 
 class CannonSprite(pygame.sprite.Sprite):
     def __init__(self, image_path, x, y):
         super().__init__()
+        # Cargar y escalar la imagen a tamaño fijo al inicio.
         self.original_image = pygame.image.load(image_path)
-        self.image = pygame.transform.scale(self.original_image, (100, 50))
+        self.original_image = pygame.transform.scale(self.original_image, (100, 50))
+        self.image = self.original_image.copy()  # Hacemos una copia para trabajar con ella
         self.rect = self.image.get_rect(midbottom=(x, y))
+        self.angle = 45  # Ángulo inicial
+
+    def rotate(self, delta):
+        self.angle += delta
+        self.angle = min(90, max(15, self.angle))  # Limitar el ángulo entre 15 y 90 grados
+        # Rotar la imagen original y recalibrar el rectángulo.
+        self.image = pygame.transform.rotate(self.original_image, -self.angle + 90)
+        self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
+
 
 pygame.init()
 width, height = 1124, 860
@@ -100,6 +106,8 @@ simulate = False
 dragging = False
 current_index = 0
 trajectory_points = []  # Lista para almacenar puntos de la trayectoria
+font = pygame.font.Font(None, 36)
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -121,6 +129,11 @@ while running:
         elif event.type == pygame.MOUSEMOTION and dragging:
             slider.move_knob(event.pos)
             velocity = slider.value
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                cannon.rotate(-5)  # Rotate left
+            if event.key == pygame.K_RIGHT:
+                cannon.rotate(5)   # Rotate right
 
     screen.blit(background.image, background.rect)
     slider.draw(screen)
@@ -128,6 +141,8 @@ while running:
     buttonText = coordinatesFont.render("Start Simulation", True, (0, 0, 0))
     screen.blit(buttonText, (button.x + 50, button.y + 15))
     screen.blit(cannon.image, cannon.rect)
+    screen.blit(cannon.image, cannon.rect)
+    draw_angle(screen,font, cannon.angle, (50, 50)) 
 
     for point in trajectory_points:
         pygame.draw.circle(screen, (0, 0, 255), point, 3)  # Dibuja el rastro
@@ -142,5 +157,3 @@ while running:
     clock.tick(60)
 
 pygame.quit()
-
-###

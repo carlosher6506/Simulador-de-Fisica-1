@@ -40,9 +40,6 @@ def draw_trajectory(u, theta, gravity, xPositions=[], yPositions=[], initial_pos
     return xPositions, yPositions
 
 
-
-
-
 pygame.init()
 
 width = 1024
