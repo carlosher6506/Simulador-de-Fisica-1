@@ -18,6 +18,15 @@ def draw_trajectory(u, theta, gravity):
         yPositions.append(18 * (u * math.sin(theta) * t - 0.5 * gravity * t * t))
     return xPositions, yPositions
 
+def calculate_angle(pivot, pos):
+    """Calculate the angle between the horizontal and the line joining the pivot and pos."""
+    dx = pos[0] - pivot[0]
+    dy = pivot[1] - pos[1]  # Invert dy due to Pygame's y-coordinate being downwards.
+    if dx == 0:
+        dx = 0.01  # Prevent division by zero
+    angle = math.degrees(math.atan(dy / dx))
+    return angle + 90 if dx > 0 else angle + 270
+
 class BackgroundSprite(pygame.sprite.Sprite):
     def __init__(self, image_path, screen_size):
         super().__init__()
@@ -133,3 +142,5 @@ while running:
     clock.tick(60)
 
 pygame.quit()
+
+###

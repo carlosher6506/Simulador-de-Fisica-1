@@ -26,10 +26,10 @@ def frange(start, final, increment):
 
 def draw_trajectory(u, theta, gravity, xPositions=[], yPositions=[], initial_position=(50, 179)):
     theta = math.radians(theta)
-    u_multiplied = u * 5  # Velocidad multiplicada por 5 para la animación
+    u_multiplied = u * 4.5  # Velocidad multiplicada por 5 para la animación
     t_flight = 2 * u_multiplied * math.sin(theta) / gravity  
     original_t_flight = 2 * u * math.sin(theta) / gravity  # Tiempo de vuelo original sin multiplicar
-    intervals = frange(0.12, t_flight, 0.013)
+    intervals = frange(0.12, t_flight, 0.012)
     for t in intervals:
         xPositions.append(initial_position[0] + u_multiplied * math.cos(theta) * t)
         yPositions.append(initial_position[1] + u_multiplied * math.sin(theta) * t - 0.5 * gravity * t * t)
@@ -233,14 +233,13 @@ while running:
         
     if show_results_flag:
         pygame.draw.rect(screen, (color_label), pygame.Rect(1120, 50, 300, 280))
-        pygame.draw.rect(screen, (white), pygame.Rect(1227, 80, 110, 32))
-        draw_text(screen, f'Tiempo Original: {original_t_flight:.2f}', pygame.Rect(1130, 180, 220, 32), font, black)  # Mostrar el tiempo original
-        pygame.draw.rect(screen, (white), pygame.Rect(1227, 120, 110, 32))
-        draw_text(screen, f'Altura Max. Original: {original_max_height:.2f}', pygame.Rect(1130, 200, 200, 32), font, black)  # Mostrar la altura máxima original
-        pygame.draw.rect(screen, (white), pygame.Rect(1218, 240, 110, 32))
-        draw_text(screen, f'Rango Original: {original_projectile_range:.2f}', pygame.Rect(1130, 280, 200, 32), font, black)  # Mostrar el rango original
-        pygame.draw.rect(screen, (white), pygame.Rect(1218, 320, 110, 32))
-        draw_text(screen, f'Velocidad: {original_velocity}', pygame.Rect(1130, 320, 200, 32), font, black)  # Mostrar la velocidad original
+        
+        draw_text(screen, f'Tiempo: {original_t_flight:.2f} seg.', pygame.Rect(1130, 80, 220, 32), font, black)  # Mostrar el tiempo original
+        #pygame.draw.rect(screen, (white), pygame.Rect(1227, 90, 110, 32))
+        draw_text(screen, f'Altura Maxíma: {original_max_height:.2f} M', pygame.Rect(1130, 140, 200, 32), font, black)  # Mostrar la altura máxima original
+        #pygame.draw.rect(screen, (white), pygame.Rect(1227, 240, 110, 32))
+        draw_text(screen, f'Rango: {original_projectile_range:.2f} M', pygame.Rect(1130, 200, 200, 32), font, black)  # Mostrar el rango original
+        #pygame.draw.rect(screen, (white), pygame.Rect(1227, 320, 110, 32))
     
     pygame.draw.rect(screen, btn_function_color, btn_function)
     draw_text(screen, 'Ejecutar', btn_function, font, black)
